@@ -31,6 +31,10 @@ pnpm build
 - client 插件通过 HMR 注入浏览器；host 侧无需轮询，纯事件上报
 - 日志环形缓冲防内存膨胀；页面刷新后 client 重新 hook
 
+## 相关
+
+- [我的数字生命爱丽丝 — 插件生态中心（架构总览）](https://github.com/jonah791/alice-digital-life)
+
 ## License
 
 MIT
