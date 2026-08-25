@@ -1,3 +1,13 @@
+<!--
+  DSH 插件生态公约声明（plugin-ecosystem-convention · 组合优先/声明清晰/兼容优先）
+  purpose: 浏览器工具插件：client 捕获 console/全局错误上报宿主，agent 用 browser_console 工具读取——自己看 F12 Console。
+  inject: 'tools','webServer'
+  tools: browser_console,browser_page
+  runtime: host + client
+  envDeps: 无（纯逻辑/标准 Node）
+  boundary: 无特殊授权边界
+  compat: cordis ^4.0.1 / dsh-tools ^0.1.0-rc.6
+-->
 # dsh-agent-browser — 浏览器控制台感知插件
 
 DSH（DeepSeek Harness）插件：让 agent 能够「自己看 F12 Console」——hook 浏览器端的 console 日志与全局错误，批量上报宿主，agent 通过工具读取，用于排查前端插件加载/运行问题。
