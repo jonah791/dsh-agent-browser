@@ -10,6 +10,12 @@
 -->
 # dsh-agent-browser — 浏览器控制台感知插件
 
+
+<p align="center">
+  <a href="https://github.com/jonah791/dsh-agent-browser"><img src="https://img.shields.io/badge/version-0.1.0-blue" alt="version"></a>
+  <img src="https://img.shields.io/badge/License-MIT-green" alt="license">
+  <img src="https://img.shields.io/badge/TypeScript-3178C6" alt="TypeScript">
+</p>
 DSH（DeepSeek Harness）插件：让 agent 能够「自己看 F12 Console」——hook 浏览器端的 console 日志与全局错误，批量上报宿主，agent 通过工具读取，用于排查前端插件加载/运行问题。
 
 ## 功能特性
