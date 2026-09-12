@@ -14,6 +14,7 @@ import z from '@deepseek-ai/schemastery'
 import { defineTool } from '@deepseek-ai/dsh-tools'
 import type { JsonValue } from '@deepseek-ai/dsh-tools'
 import { TypertRemoteService, Remote } from '@deepseek-ai/dsh-typert-protocol'
+import { appendLogs, normalizePage, parseClientState } from './logic.ts'
 
 export const name = 'agent-browser'
 export const inject = ['tools', 'webServer'] as const
@@ -59,13 +60,15 @@ const state = {
 export function loadClientState(dshHome: string): void {
   state.stateFile = dshHome ? join(dshHome, '.browser-client-state.json') : ''
   if (!state.stateFile) return
+  let raw: string
   try {
-    const saved = JSON.parse(readFileSync(state.stateFile, 'utf8')) as BrowserClientState
-    if (typeof saved.lastSeenAt === 'number' && typeof saved.page === 'string') {
-      state.lastSeenAt = saved.lastSeenAt
-      state.page = saved.page
-    }
-  } catch { /* 首次运行/文件缺失：从零开始 */ }
+    raw = readFileSync(state.stateFile, 'utf8')
+  } catch { return /* 首次运行/文件缺失：从零开始 */ }
+  const saved = parseClientState(raw)
+  // 损坏 / 形状不符 → **保持内存态不动**：半截数据比没有数据更危险（会污染「上次在场时间」）
+  if (saved === null) return
+  state.lastSeenAt = saved.lastSeenAt
+  state.page = saved.page
 }
 function persistState(): void {
   if (!state.stateFile) return
@@ -73,7 +76,8 @@ function persistState(): void {
 }
 /** 裸心跳入口（webServer 路由调用）：client 只要执行了 apply 就会周期上报。 */
 export function heartbeat(page: string, phase = ''): void {
-  if (page) state.page = page.slice(0, 300)
+  const p = normalizePage(page)
+  if (p) state.page = p
   if (phase) state.phase = phase
   state.lastSeenAt = Date.now()
   persistState()
@@ -92,13 +96,9 @@ export class BrowserLogService extends TypertRemoteService {
   report(req: { logs?: Array<{ t?: number; level?: string; text?: string }>; page?: string }): { ok: boolean } {
     heartbeat(typeof req.page === 'string' ? req.page : '')
     const items = Array.isArray(req.logs) ? req.logs : []
-    for (const it of items) {
-      const level = typeof it.level === 'string' ? it.level : 'info'
-      const text = typeof it.text === 'string' ? it.text.slice(0, state.maxText) : String(it.text ?? '')
-      if (!text) continue
-      state.logs.push({ t: typeof it.t === 'number' ? it.t : Date.now(), level, text, page: state.page })
-    }
-    if (state.logs.length > state.maxLogs) state.logs.splice(0, state.logs.length - state.maxLogs)
+    state.logs = appendLogs(state.logs, items, {
+      maxLogs: state.maxLogs, maxText: state.maxText, page: state.page, nowMs: Date.now(),
+    })
     return { ok: true }
   }
   @Remote('list')
