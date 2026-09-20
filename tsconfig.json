@@ -22,15 +22,7 @@
     "rewriteRelativeImportExtensions": true,
     "types": [
       "node"
-    ],
-    "paths": {
-      "@deepseek-ai/cordis": [
-        "C:/Users/tr/AppData/Local/npm-cache/_npx/1e7f6d9597241db0/node_modules/@deepseek-ai/cordis/lib/types/index.d.ts"
-      ],
-      "@deepseek-ai/cordis/*": [
-        "C:/Users/tr/AppData/Local/npm-cache/_npx/1e7f6d9597241db0/node_modules/@deepseek-ai/cordis/lib/types/*"
-      ]
-    }
+    ]
   },
   "include": [
     "src"
