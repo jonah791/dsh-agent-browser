@@ -12,7 +12,8 @@ import type { Context } from '@deepseek-ai/cordis'
 import type {} from '@deepseek-ai/dsh-host-webserver'
 import z from '@deepseek-ai/schemastery'
 import { defineTool } from '@deepseek-ai/dsh-tools'
-import type { JsonValue } from '@deepseek-ai/dsh-tools'
+// JsonValue 在 DSH 0.1.5 从 dsh-tools / dsh-session 迁到 dsh-util-values（0.1.6 适配）
+import type { JsonValue } from '@deepseek-ai/dsh-util-values'
 import { TypertRemoteService, Remote } from '@deepseek-ai/dsh-typert-protocol'
 import { appendLogs, normalizePage, parseClientState } from './logic.ts'
 

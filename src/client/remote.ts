@@ -10,8 +10,8 @@ const logSchema = z.object({
   level: z.string().optional(),
   text: z.string().optional(),
 })
-const reportRequest: TypertCodec = { mode: 'strict', typeSymbol: 'browserLog#ReportRequest', schema: z.object({ logs: z.array(logSchema).optional(), page: z.string().optional() }) }
-const okResult: TypertCodec = { mode: 'strict', typeSymbol: 'browserLog#OkResult', schema: z.object({ ok: z.boolean() }) }
+const reportRequest: TypertCodec = { mode: 'strict', typeSymbol: 'browserLog#ReportRequest', create: () => z.object({ logs: z.array(logSchema).optional(), page: z.string().optional() }) }
+const okResult: TypertCodec = { mode: 'strict', typeSymbol: 'browserLog#OkResult', create: () => z.object({ ok: z.boolean() }) }
 
 declare module '@deepseek-ai/dsh-typert-protocol' {
   interface TypertRemoteNamespaceMap {

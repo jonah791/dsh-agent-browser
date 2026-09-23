@@ -3,7 +3,10 @@
  * hook 在 apply 最前面安装（不依赖 remote 就绪）；上报带重试，remote 就绪后自动补报。
  * @module dsh-agent-browser/client
  */
-import type { ClientContext } from '@deepseek-ai/dsh-client-runtime/client'
+// 0.1.7 契约：聚合包 `dsh-client-runtime/client` 已被上游移除；ClientContext 回到属主 @deepseek-ai/cordis
+import type { Context as ClientContext } from '@deepseek-ai/cordis'
+// Type-only: declares `ctx.remote`（RemoteRegistry）on the client Context —— 与官方 ui-plugin-manager 同款写法。
+import type {} from '@deepseek-ai/dsh-api-remotes/client'
 import TYPERT_REMOTE from './remote.ts'
 
 export { TYPERT_REMOTE }
@@ -118,7 +121,9 @@ export function apply(ctx: ClientContext): void {
       const html = await (await fetch(location.pathname + '?clientprobe=' + Date.now(), { cache: 'no-store' })).text()
       const m = html.match(new RegExp('__DSH_BOOT__\\s*=\\s*(\\{[\\s\\S]*?\\})\\s*<\\/script>'))
       if (!m) return
-      const boot = JSON.parse(m[1]) as { entries?: Array<{ id: string; rev: string }> }
+      const raw = m[1]
+      if (raw === undefined) return
+      const boot = JSON.parse(raw) as { entries?: Array<{ id: string; rev: string }> }
       const entry = boot.entries?.find((e) => e.id === 'dsh-agent-browser')
       if (entry && entry.rev && entry.rev !== CURRENT_REV) {
         // 新 bundle 就绪：自动刷新加载
