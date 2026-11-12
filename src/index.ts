@@ -119,6 +119,7 @@ export function apply(ctx: Context, config: Config): void {
 
   ctx.tools.register(defineTool({
     name: 'browser_console',
+    deferLoading: true,
     description: '读取浏览器端上报的控制台日志与全局错误（client 插件 hook console + window error/unhandledrejection）。用于排查前端插件加载/运行问题——相当于自己看 F12 Console。',
     parameters: {
       limit: { type: 'number', description: '返回条数（默认 50）' },
@@ -141,6 +142,7 @@ export function apply(ctx: Context, config: Config): void {
 
   ctx.tools.register(defineTool({
     name: 'browser_page',
+    deferLoading: true,
     description: '查看浏览器当前页面信息（URL/标题）——client 插件上报的最新页面状态。',
     parameters: {},
     output: { schema: { type: 'object', additionalProperties: false, properties: { page: { type: 'string' }, clientAlive: { type: 'boolean', required: true }, lastSeenAt: { type: 'number' }, lastSeenAgoSec: { type: 'number' } } }, render: (_a: any, v: any) => [{ type: 'text', text: 'client ' + (v.clientAlive ? '存活' : (v.lastSeenAt ? '失联（' + v.lastSeenAgoSec + 's 前）' : '从未心跳')) + (v.page ? ' | ' + v.page : '') }] },
